@@ -99,7 +99,7 @@ async def play(ctx: commands.Context, *args):
     await ctx.send(f'looking for `{query}`...')
     with yt_dlp.YoutubeDL({'format': 'worstaudio',
                            'source_address': '0.0.0.0',
-                           'default_search': 'ytsearch',
+                           'default_search': 'ytsearch5',
                            'outtmpl': '%(id)s.%(ext)s',
                            'noplaylist': True,
                            'allow_playlist_files': False,
@@ -108,16 +108,27 @@ async def play(ctx: commands.Context, *args):
                            'paths': {'home': f'./dl/{server_id}'}}) as ydl:
         try:
             info = ydl.extract_info(query, download=False)
+            await ctx.send("Pick one:")
+
+            if 'entries' in info:
+                for index, entry in enumerate(info['entries']):
+                    await ctx.send(f"{index+1}. `{entry['title']}`")
+
+
         except yt_dlp.utils.DownloadError as err:
             await notify_about_failure(ctx, err)
             return
 
+        msg = await bot.wait_for("message", check=lambda m: m.content.isdigit() and 1 <= int(m.content) <= 5 and m.channel == ctx.channel)
+
         if 'entries' in info:
-            info = info['entries'][0]
+            info = info['entries'][int(msg.content) - 1]
+
         # send link if it was a search, otherwise send title as sending link again would clutter chat with previews
         await ctx.send('downloading ' + (f'https://youtu.be/{info["id"]}' if will_need_search else f'`{info["title"]}`'))
+
         try:
-            ydl.download([query])
+            ydl.download([info['webpage_url']])
         except yt_dlp.utils.DownloadError as err:
             await notify_about_failure(ctx, err)
             return
