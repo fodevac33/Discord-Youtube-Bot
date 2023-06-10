@@ -133,11 +133,23 @@ async def play(ctx: commands.Context, *args):
 
 @bot.command(name="pause")
 async def pause(ctx: commands.Context):
+    try: queue_length = len(queues[ctx.guild.id])
+    except KeyError: queue_length = 0
+    if queue_length <= 0:
+        await ctx.send('the bot isn\'t playing anything')
+        return
+
     voice_client = get_voice_client_from_channel_id(ctx.author.voice.channel.id)
     voice_client.pause()
 
 @bot.command(name="resume")
 async def pause(ctx: commands.Context):
+    try: queue_length = len(queues[ctx.guild.id])
+    except KeyError: queue_length = 0
+    if queue_length <= 0:
+        await ctx.send('the bot isn\'t playing anything')
+        return
+
     voice_client = get_voice_client_from_channel_id(ctx.author.voice.channel.id)
     voice_client.resume()
 
