@@ -1,4 +1,7 @@
 # YoutubeBot - a self-hosted Discord bot for playing YouTube videos
+
+Forked beacuse I wanted the ability to select form more than one option when searching, this version lists 5 and you select them by typing a number. I also added a `.pause` and `.resume` command, the rest should work exactly the same as the original.
+
 ## Commands
 - `.play {url or search}` - plays or queues a video, and joins VC if it's not already there.
     - alternate: `.p`
